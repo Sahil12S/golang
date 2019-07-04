@@ -24,6 +24,11 @@ func setPixel(x, y int, c color, pixels []byte) {
 
 func main() {
 
+	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
+		panic(err)
+	}
+	defer sdl.Quit()
+
 	window, err := sdl.CreateWindow("Testing window", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, int32(winWidth), int32(winHeight), sdl.WINDOW_SHOWN)
 	if err != nil {
 		fmt.Println(err)
@@ -59,6 +64,19 @@ func main() {
 	renderer.Copy(tex, nil, nil)
 	renderer.Present()
 
-	sdl.Delay(2000)
+	// Check for events
+
+	running := true
+	for running {
+		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
+			switch event.(type) {
+			case *sdl.QuitEvent:
+				fmt.Println("Quit")
+				running = false
+				break
+			}
+		}
+		sdl.Delay(16)
+	}
 
 }
